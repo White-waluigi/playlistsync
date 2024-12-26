@@ -73,7 +73,7 @@ async function processSong(db,id){
 			title = await runProcess('yt-dlp',args);
 		}catch(e){
 
-			db.prepare('UPDATE log SET message = ?').run("Failure to identify title for "+id);
+			db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Failure to identify title for '+id);
 			throw e;
 
 		}
@@ -109,7 +109,7 @@ async function processSong(db,id){
 			return;
 		}
 
-		db.prepare('UPDATE log SET message = ?').run("Failure to download "+title+" ("+id+")");
+		db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Failure to download '+title+' ('+id+')');
 		throw e;
 	}
 
@@ -145,7 +145,7 @@ async function processPlaylist(db,id){
 			try{
 				playlistName = await runProcess('yt-dlp',args);
 			}catch(e){
-				db.prepare('UPDATE log SET message = ?').run("Failure to identify playlist name for "+id);
+				db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Failure to identify playlist name for '+id);
 				throw e;
 			}
 
@@ -176,7 +176,7 @@ async function processPlaylist(db,id){
 		db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Successfully Scraped playlist '+playlistName);
 
 	}catch(e){
-		db.prepare('UPDATE log SET message = ?').run("Failure to scrape playlist "+id);
+		db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Failure to process playlist '+id);
 		throw e;
 	}
 }
