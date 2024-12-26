@@ -1,0 +1,23 @@
+{
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"reset": "node index.js --resetDB",
+		"dev": "nodemon index.js"
+	},
+	"type": "module",
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"better-sqlite3": "^11.7.0",
+		"cors": "^2.8.5",
+		"express": "^4.21.2",
+		"javascript-time-ago": "^2.5.11",
+		"nodemon": "^3.1.9",
+		"yargs": "^17.7.2"
+	}
+}
