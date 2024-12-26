@@ -19,8 +19,7 @@ async function startLoop(db) {
 		try{
 			await nextProcess(db);
 		}catch(e){
-			console.error(e);
-			console.error('Trying again in 4 seconds');
+			console.error(e); console.error('Trying again in 4 seconds');
 			await new Promise(resolve => setTimeout(resolve, 4000));
 		}
 	}
@@ -117,7 +116,7 @@ async function processSong(db,id){
 	//set processed to true
 	db.prepare('UPDATE songs SET completed = true WHERE id = ?').run(id);
 
-	db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Successfully downloaded '+id);
+	db.prepare('INSERT INTO synclog (message) VALUES (?)').run('Successfully downloaded '+title+' ('+id+')');
 
 
 
