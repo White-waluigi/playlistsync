@@ -40,7 +40,7 @@ async function runProcess(name,args,cwd='.'){
 
 			{cwd}, (error,stdout,stderr) => {
 			if(error){
-				if(stderr.includes('unavailable')){
+				if(stderr.includes('Video unavailable')){
 					reject(new VidoeUnavailableError(stderr));
 					return;
 				}
