@@ -41,7 +41,7 @@ async function runProcess(name,args,cwd='.'){
 			{cwd}, (error,stdout,stderr) => {
 			if(error){
 				if(stderr.includes('unavailable')){
-					reject(new VidoeUnavailableError('This video is unavailable'));
+					reject(new VidoeUnavailableError(stderr));
 					return;
 				}
 
