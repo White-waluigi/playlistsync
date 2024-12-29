@@ -34,44 +34,41 @@ class VidoeUnavailableError extends Error{
 }
 async function runProcess(name, args, cwd = '.') {
 	return await new Promise((resolve, reject) => {
-		console.log("****");
-		/*
-		try{
-			const process = spawn(name, args, { cwd, shell: true });
-		console.log("AAAAAAA");
+		const process = spawn(name, args, { cwd, shell: true });
 
-			process.stdout.on('data', (data) => {
-				process.stdout.write(data.toString());
-			});
-			console.log("BBBBBBB");
+		process.stdout.on('data', (data) => {
+			console.log(data.toString());
+			//process.stdout.write(data.toString());
+		});
 
-			process.stderr.on('data', (data) => {
-				const output = data.toString();
-				process.stderr.write(output);
-				if (output.includes('Video unavailable')) {
-					reject(new VideoUnavailableError(output));
-					process.kill(); // Terminate the process if this specific error occurs
-				}
-			});
-			console.log("CCCCCCC");
 
-			process.on('error', (error) => {
-				reject(error);
-			});
-			console.log("DDDDDDD");
 
-			process.on('close', (code) => {
-				if (code !== 0) {
-					reject(new Error(`Process exited with code ${code}`));
-				} else {
-					resolve(`Process completed successfully with code ${code}`);
-				}
-			});
-		}catch(e){
-			console.error(e);
-			reject(e);
-		}
-		*/
+		process.stderr.on('data', (data) => {
+			console.log(data.toString());
+			/*
+			const output = data.toString();
+			process.stderr.write(output);
+			if (output.includes('Video unavailable')) {
+				reject(new VideoUnavailableError(output));
+				process.kill(); // Terminate the process if this specific error occurs
+			}
+			*/
+		});
+
+		process.on('error', (error) => {
+			console.log('error:',error);
+			reject(error);
+		});
+
+		process.on('close', (code) => {
+			console.log('close:',code);
+			if (code !== 0) {
+
+				reject(new Error(`Process exited with code ${code}`));
+			} else {
+				resolve(`Process completed successfully with code ${code}`);
+			}
+		});
 	});
 }
 
