@@ -15,7 +15,7 @@ async function startLoop(db) {
 		a=!a;
 		console.log(a?'...':'---');
 
-		
+
 		try{
 			await nextProcess(db);
 		}catch(e){
@@ -33,34 +33,39 @@ class VidoeUnavailableError extends Error{
 	}
 }
 async function runProcess(name, args, cwd = '.') {
-    return await new Promise((resolve, reject) => {
-        const process = spawn(name, args, { cwd, shell: true });
+	return await new Promise((resolve, reject) => {
+		try{
+			const process = spawn(name, args, { cwd, shell: true });
 
-        process.stdout.on('data', (data) => {
-            process.stdout.write(data.toString());
-        });
+			process.stdout.on('data', (data) => {
+				process.stdout.write(data.toString());
+			});
 
-        process.stderr.on('data', (data) => {
-            const output = data.toString();
-            process.stderr.write(output);
-            if (output.includes('Video unavailable')) {
-                reject(new VideoUnavailableError(output));
-                process.kill(); // Terminate the process if this specific error occurs
-            }
-        });
+			process.stderr.on('data', (data) => {
+				const output = data.toString();
+				process.stderr.write(output);
+				if (output.includes('Video unavailable')) {
+					reject(new VideoUnavailableError(output));
+					process.kill(); // Terminate the process if this specific error occurs
+				}
+			});
 
-        process.on('error', (error) => {
-            reject(error);
-        });
+			process.on('error', (error) => {
+				reject(error);
+			});
 
-        process.on('close', (code) => {
-            if (code !== 0) {
-                reject(new Error(`Process exited with code ${code}`));
-            } else {
-                resolve(`Process completed successfully with code ${code}`);
-            }
-        });
-    });
+			process.on('close', (code) => {
+				if (code !== 0) {
+					reject(new Error(`Process exited with code ${code}`));
+				} else {
+					resolve(`Process completed successfully with code ${code}`);
+				}
+			});
+		}catch(e){
+			console.error(e);
+			reject(e);
+		}
+	});
 }
 
 async function processSong(db,id){
@@ -131,14 +136,14 @@ async function processSong(db,id){
 }
 
 async function processPlaylist(db,id){
-	
+
 	try{
-	
+
 		let playlistName = db.prepare('SELECT name FROM playlists WHERE id = ?').get(id).name;
 
 		if(!playlistName){
 
-			 //yt-dlp https://youtube.com/playlist?list=PLpeFO20OwBF7iEECy0biLfP34s0j-8wzk -I 1:1 --skip-download --no-warning --print playlist_title
+			//yt-dlp https://youtube.com/playlist?list=PLpeFO20OwBF7iEECy0biLfP34s0j-8wzk -I 1:1 --skip-download --no-warning --print playlist_title
 			const args = [
 				'https://youtube.com/playlist?list='+id,
 				'-I',
