@@ -42,7 +42,7 @@ function PlayList({name, total,completed,id,unavailable}) {
 		<div style={playlistStyle} className="border rounded p-2 bg-secondary">
 			<div>{name}</div>
 			<div className="d-flex flex-column justify-content-center">
-				<ProgressBar now={percentage} label={`${percentage}%`} />
+				<ProgressBar now={percentage} label={`${percentage.toFixed(2)}%`} />
 			</div>
 			<div>{completed}/{total}({unavailable})</div>
 		</div>

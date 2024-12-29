@@ -1,6 +1,6 @@
 // Call system function
 import {exec} from 'child_process';
-
+import {spawn} from 'child_process';
 
 export async function startWorker(db){
 	await startLoop(db);
@@ -32,27 +32,35 @@ class VidoeUnavailableError extends Error{
 		this.name = 'VidoeUnavailableError';
 	}
 }
+async function runProcess(name, args, cwd = '.') {
+    return await new Promise((resolve, reject) => {
+        const process = spawn(name, args, { cwd, shell: true });
 
-async function runProcess(name,args,cwd='.'){
-	return await new Promise((resolve,reject) => {
+        process.stdout.on('data', (data) => {
+            process.stdout.write(data.toString());
+        });
 
-		const process = exec(`${name} ${args.join(' ')}`,
+        process.stderr.on('data', (data) => {
+            const output = data.toString();
+            process.stderr.write(output);
+            if (output.includes('Video unavailable')) {
+                reject(new VideoUnavailableError(output));
+                process.kill(); // Terminate the process if this specific error occurs
+            }
+        });
 
-			{cwd}, (error,stdout,stderr) => {
-			if(error){
-				if(stderr.includes('Video unavailable')){
-					reject(new VidoeUnavailableError(stderr));
-					return;
-				}
+        process.on('error', (error) => {
+            reject(error);
+        });
 
-				reject(error);
-				return;
-			}
-			resolve(stdout);
-		});
-
-
-	});
+        process.on('close', (code) => {
+            if (code !== 0) {
+                reject(new Error(`Process exited with code ${code}`));
+            } else {
+                resolve(`Process completed successfully with code ${code}`);
+            }
+        });
+    });
 }
 
 async function processSong(db,id){
