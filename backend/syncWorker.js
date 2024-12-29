@@ -1,6 +1,7 @@
 // Call system function
 import {exec} from 'child_process';
 import {spawn} from 'child_process';
+import {chalk} from 'chalk';
 
 export async function startWorker(db){
 	await startLoop(db);
@@ -34,17 +35,24 @@ class VidoeUnavailableError extends Error{
 }
 async function runProcess(name, args, cwd = '.') {
 	return await new Promise((resolve, reject) => {
+
+		let logAccumulator = '';
+
 		const process = spawn(name, args, { cwd, shell: true });
 
+
 		process.stdout.on('data', (data) => {
-			console.log(data.toString());
+			console.log(chalk.yellow(data.toString()));
+			logAccumulator += data.toString();
+
 			//process.stdout.write(data.toString());
 		});
 
 
 
 		process.stderr.on('data', (data) => {
-			console.log(data.toString());
+			console.log(chalk.cyan(data.toString()));
+			logAccumulator += data.toString();
 			/*
 			const output = data.toString();
 			process.stderr.write(output);
@@ -56,13 +64,19 @@ async function runProcess(name, args, cwd = '.') {
 		});
 
 		process.on('error', (error) => {
-			console.log('error:',error);
+
+			console.log(chalk.red("error: "+error.toString()));
+			logAccumulator += error.toString();
 			reject(error);
 		});
 
 		process.on('close', (code) => {
-			console.log('close:',code);
+			console.log(chalk.green(`child process exited with code ${code}`));
+
 			if (code !== 0) {
+				if(logAccumulator.includes('Video unavailable')){
+					reject(new VidoeUnavailableError(logAccumulator));
+				}
 
 				reject(new Error(`Process exited with code ${code}`));
 			} else {

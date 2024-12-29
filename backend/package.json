@@ -14,6 +14,7 @@
 	"license": "ISC",
 	"dependencies": {
 		"better-sqlite3": "^11.7.0",
+		"chalk": "^5.4.1",
 		"cors": "^2.8.5",
 		"express": "^4.21.2",
 		"javascript-time-ago": "^2.5.11",
