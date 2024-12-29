@@ -1,7 +1,7 @@
 // Call system function
 import {exec} from 'child_process';
 import {spawn} from 'child_process';
-import {chalk} from 'chalk';
+import chalk from 'chalk';
 
 export async function startWorker(db){
 	await startLoop(db);
