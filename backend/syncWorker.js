@@ -34,12 +34,15 @@ class VidoeUnavailableError extends Error{
 }
 async function runProcess(name, args, cwd = '.') {
 	return await new Promise((resolve, reject) => {
+		console.log("****");
 		try{
 			const process = spawn(name, args, { cwd, shell: true });
+		console.log("AAAAAAA");
 
 			process.stdout.on('data', (data) => {
 				process.stdout.write(data.toString());
 			});
+			console.log("BBBBBBB");
 
 			process.stderr.on('data', (data) => {
 				const output = data.toString();
@@ -49,10 +52,12 @@ async function runProcess(name, args, cwd = '.') {
 					process.kill(); // Terminate the process if this specific error occurs
 				}
 			});
+			console.log("CCCCCCC");
 
 			process.on('error', (error) => {
 				reject(error);
 			});
+			console.log("DDDDDDD");
 
 			process.on('close', (code) => {
 				if (code !== 0) {
