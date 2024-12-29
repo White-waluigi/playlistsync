@@ -37,6 +37,7 @@ async function runProcess(name, args, cwd = '.') {
 	return await new Promise((resolve, reject) => {
 
 		let logAccumulator = '';
+		let outAccumulator = '';
 
 		const process = spawn(name, args, { cwd, shell: true });
 
@@ -44,6 +45,7 @@ async function runProcess(name, args, cwd = '.') {
 		process.stdout.on('data', (data) => {
 			console.log(chalk.yellow(data.toString()));
 			logAccumulator += data.toString();
+			outAccumulator += data.toString();
 
 			//process.stdout.write(data.toString());
 		});
@@ -80,7 +82,7 @@ async function runProcess(name, args, cwd = '.') {
 
 				reject(new Error(`Process exited with code ${code}`));
 			} else {
-				resolve(`Process completed successfully with code ${code}`);
+				resolve(outAccumulator);
 			}
 		});
 	});
