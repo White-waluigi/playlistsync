@@ -35,6 +35,7 @@ class VidoeUnavailableError extends Error{
 async function runProcess(name, args, cwd = '.') {
 	return await new Promise((resolve, reject) => {
 		console.log("****");
+		/*
 		try{
 			const process = spawn(name, args, { cwd, shell: true });
 		console.log("AAAAAAA");
@@ -70,6 +71,7 @@ async function runProcess(name, args, cwd = '.') {
 			console.error(e);
 			reject(e);
 		}
+		*/
 	});
 }
 
